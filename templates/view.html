@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ image.filename }} - Image Archiver</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>Image Details</h1>
+            <nav>
+                <a href="{{ url_for('index') }}" class="btn">Home</a>
+                <button onclick="history.back()" class="btn">Back to Results</button>
+            </nav>
+        </header>
+
+        <main class="image-details">
+            {% if error %}
+            <div class="error-message">
+                <p>Error: {{ error }}</p>
+            </div>
+            {% endif %}
+
+            <div class="image-view">
+                <div class="image-container large">
+                    {% if not error %}
+                    <img src="{{ url_for('get_image_file', file_hash=image.file_hash) }}" alt="{{ image.filename }}">
+                    {% else %}
+                    <div class="placeholder">Image not available</div>
+                    {% endif %}
+                </div>
+
+                <div class="metadata">
+                    <h2>{{ image.filename }}</h2>
+
+                    <div class="metadata-section">
+                        <h3>Description</h3>
+                        <div class="description">
+                            {{ image.description or "No description available" }}
+                        </div>
+                    </div>
+
+                    <div class="metadata-section">
+                        <h3>File Information</h3>
+                        <table class="metadata-table">
+                            <tr>
+                                <th>Path:</th>
+                                <td>{{ image.filepath }}</td>
+                            </tr>
+                            <tr>
+                                <th>Size:</th>
+                                <td>{{ (image.file_size / 1024)|round(2) }} KB</td>
+                            </tr>
+                            {% if image.width and image.height %}
+                            <tr>
+                                <th>Dimensions:</th>
+                                <td>{{ image.width }} x {{ image.height }} pixels</td>
+                            </tr>
+                            {% endif %}
+                            <tr>
+                                <th>Created:</th>
+                                <td>{{ image.created_at }}</td>
+                            </tr>
+                            <tr>
+                                <th>Processed:</th>
+                                <td>{{ image.processed_at }}</td>
+                            </tr>
+                            <tr>
+                                <th>File Hash:</th>
+                                <td><code>{{ image.file_hash }}</code></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Image Archiver with Semantic Search using Python, Flask, and Ollama/llava</p>
+        </footer>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Archiver with Semantic Search</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>Image Archiver with Semantic Search</h1>
+        </header>
+
+        <main>
+            <section class="scan-section">
+                <h2>Scan Directory</h2>
+                <form id="scan-form">
+                    <div class="form-group">
+                        <label for="directory">Directory Path:</label>
+                        <input type="text" id="directory" name="directory" required placeholder="/path/to/images">
+                    </div>
+                    <button type="submit" class="btn primary">Scan Directory</button>
+                </form>
+                <div id="scan-status" class="status-box hidden">
+                    <div class="progress-container">
+                        <div class="progress-bar"></div>
+                    </div>
+                    <p id="status-message">Processing...</p>
+                </div>
+            </section>
+
+            <section class="search-section">
+                <h2>Search Images</h2>
+                <form id="search-form" action="/search" method="get">
+                    <div class="form-group">
+                        <label for="query">Search Query:</label>
+                        <input type="text" id="query" name="query" required placeholder="Enter search query">
+                    </div>
+                    <div class="form-group">
+                        <label>Search Type:</label>
+                        <div class="radio-group">
+                            <label>
+                                <input type="radio" name="type" value="sql" checked>
+                                SQL Search (filename/description text match)
+                            </label>
+                            <label>
+                                <input type="radio" name="type" value="semantic">
+                                Semantic Search (meaning similarity)
+                            </label>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn primary">Search</button>
+                </form>
+            </section>
+        </main>
+
+        <footer>
+            <p>Image Archiver with Semantic Search using Python, Flask, and Ollama/llava</p>
+        </footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+
+</html>

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Results - Image Archiver</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>Search Results</h1>
+            <nav>
+                <a href="{{ url_for('index') }}" class="btn">Back to Home</a>
+            </nav>
+        </header>
+
+        <main>
+            <section class="search-info">
+                <h2>Results for: {{ query }}</h2>
+                <p>Search type: {{ "Text-based Search" if search_type == "sql" else "Semantic Search" }}</p>
+                <p>Found {{ total }} results</p>
+
+                <!-- New search form -->
+                <form id="search-form" action="/search" method="get" class="mini-search-form">
+                    <div class="form-group">
+                        <input type="text" id="query" name="query" value="{{ query }}" required
+                            placeholder="Enter search query">
+                        <div class="radio-group inline">
+                            <label>
+                                <input type="radio" name="type" value="sql" {{ 'checked' if search_type=='sql' else ''
+                                    }}>
+                                SQL
+                            </label>
+                            <label>
+                                <input type="radio" name="type" value="semantic" {{ 'checked' if search_type=='semantic'
+                                    else '' }}>
+                                Semantic
+                            </label>
+                        </div>
+                        <button type="submit" class="btn primary">Search</button>
+                    </div>
+                </form>
+            </section>
+
+            {% if error %}
+            <div class="error-message">
+                <p>Error: {{ error }}</p>
+            </div>
+            {% endif %}
+
+            {% if results %}
+            <section class="results-grid">
+                {% for result in results %}
+                <div class="image-card">
+                    <a href="{{ url_for('view_image', file_hash=result.image.file_hash) }}">
+                        <div class="image-container">
+                            <img src="{{ url_for('get_image_file', file_hash=result.image.file_hash) }}"
+                                alt="{{ result.image.filename }}">
+                        </div>
+                        <div class="image-info">
+                            <h3>{{ result.image.filename }}</h3>
+                            {% if search_type == 'semantic' %}
+                            <div class="similarity">
+                                <div class="similarity-bar" style="width: {{ result.similarity * 100 }}%"></div>
+                                <span>{{ "%.2f"|format(result.similarity * 100) }}% match</span>
+                            </div>
+                            {% endif %}
+                            <p class="description">{{ result.image.description|truncate(100) }}</p>
+                        </div>
+                    </a>
+                </div>
+                {% endfor %}
+            </section>
+
+            <!-- Pagination -->
+            {% if total > per_page %}
+            <div class="pagination">
+                {% set total_pages = (total + per_page - 1) // per_page %}
+                {% if page > 1 %}
+                <a href="{{ url_for('search', query=query, type=search_type, page=page-1) }}" class="btn">Previous</a>
+                {% endif %}
+
+                <span class="page-info">Page {{ page }} of {{ total_pages }}</span>
+
+                {% if page < total_pages %} <a
+                    href="{{ url_for('search', query=query, type=search_type, page=page+1) }}" class="btn">Next</a>
+                    {% endif %}
+            </div>
+            {% endif %}
+
+            {% else %}
+            <div class="no-results">
+                <p>No images found matching your search criteria.</p>
+            </div>
+            {% endif %}
+        </main>
+
+        <footer>
+            <p>Image Archiver with Semantic Search using Python, Flask, and Ollama/llava</p>
+        </footer>
+    </div>
+</body>
+
+</html>
